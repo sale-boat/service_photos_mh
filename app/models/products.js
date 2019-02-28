@@ -1,38 +1,56 @@
 const { Client } = require('pg');
 const { database } = require('../../config');
 
-const getAll = async () => {
+const postgresStringify = function (value) {
+  var result = JSON.stringify(value);
+  if (typeof value === 'string') {
+    result = '\'' + result.slice(1, result.length - 1) + '\'';
+  }
+  return result;
+}
+
+const getAll = async (tableName='products') => {
   const client = new Client(database);
   await client.connect();
-  const res = await client.query('SELECT * FROM products');
+  const res = await client.query(`SELECT * FROM ${tableName}`);
   client.end();
   return res;
 };
 
-const getOne = async (id) => {
+const getOne = async (id, tableName='products') => {
   const client = new Client(database);
   await client.connect();
-  const res = await client.query(`
-    SELECT * FROM products
-    WHERE products.unique_id = ${id}
-  `);
+  const res = await client.query(`SELECT * FROM ${tableName} WHERE ${tableName}.unique_id = ${id}`);
   client.end();
   return res;
 };
 
-const updateOne = async (id, productData) => {
+const insertOne = async (productData, tableName='products') => {
   const client = new Client(database);
   await client.connect();
-  var dataString = Object.entries(productData).map((pair) => pair[0] + ' = ' + JSON.stringify(pair[1])).join(' ');
-  const res = await client.query(`UPDATE products SET ${dataString} WHERE products.unique_id = ${id}`);
+  var keyString = Object.keys(productData).join(', ');
+  var dataString = Object.values(productData).map((value) => postgresStringify(value)).join(', ');
+  var qStr = `INSERT INTO ${tableName} (${keyString}) VALUES (${dataString})`;
+  console.log(qStr);
+
+  const res = await client.query(qStr);
   client.end();
   return res;
 };
 
-const deleteOne = async (id) => {
+const updateOne = async (id, productData, tableName='products') => {
   const client = new Client(database);
   await client.connect();
-  const res = await client.query(`DELETE FROM products WHERE products.unique_id = ${id}`);
+  var dataString = Object.entries(productData).map((pair) => pair[0] + ' = ' + postgresStringify(pair[1])).join(' ');
+  const res = await client.query(`UPDATE ${tableName} SET ${dataString} WHERE ${tableName}.unique_id = ${id}`);
+  client.end();
+  return res;
+};
+
+const deleteOne = async (id, tableName='products') => {
+  const client = new Client(database);
+  await client.connect();
+  const res = await client.query(`DELETE FROM ${tableName} WHERE ${tableName}.unique_id = ${id}`);
   client.end();
   return res;
 };
@@ -40,6 +58,7 @@ const deleteOne = async (id) => {
 module.exports = {
   getAll,
   getOne,
+  insertOne,
   updateOne,
   deleteOne
 };
