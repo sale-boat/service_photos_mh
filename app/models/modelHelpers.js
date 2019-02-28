@@ -1,7 +1,12 @@
 const { Client } = require('pg');
 const { database } = require('../../config');
 
+/*
+All these methods are generic functions and can be used for any table
+*/
+
 const postgresStringify = function (value) {
+  // Postgres requires strings to look like, 'example', and not 
   var result = JSON.stringify(value);
   if (typeof value === 'string') {
     result = '\'' + result.slice(1, result.length - 1) + '\'';
@@ -31,7 +36,6 @@ const insertOne = async (productData, tableName='products') => {
   var keyString = Object.keys(productData).join(', ');
   var dataString = Object.values(productData).map((value) => postgresStringify(value)).join(', ');
   var qStr = `INSERT INTO ${tableName} (${keyString}) VALUES (${dataString})`;
-  console.log(qStr);
 
   const res = await client.query(qStr);
   client.end();

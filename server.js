@@ -6,7 +6,7 @@ const compression = require('compression');
 
 const app = express();
 
-const productRoutes = require('./app/controllers/productRoutes');
+const dbRoutes = require('./app/controllers/dbRoutes');
 
 const seedScript = require('./app/helpers/seedingScript');
 
@@ -18,11 +18,12 @@ app.use(compression());
 app.use(bodyParser.json());
 
 app.use(express.static(`${__dirname}/dist`));
-app.use('/api/products', cors(), productRoutes);
 
 app.get('/api/bundle', (req, res) => {
   res.sendFile(`${__dirname}/dist/bundle.js`);
 });
+
+app.use('/api', cors(), dbRoutes); // App must handle any table name for /api routes
 
 app.get('/products/:id', (req, res) => {
   res.sendFile(`${__dirname}/dist/index.html`);
