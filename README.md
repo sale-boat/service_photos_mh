@@ -8,24 +8,24 @@ Get Single Product Data:
 
 ```javascript
 {
-  "id": int,
-  "unique_id": int,
-  "name": "",
-  "category": "",
-  "manufacturer": "",
-  "primary_image": "",
-  "review_one_star_count": int,
-  "review_two_star_count": int,
-  "review_three_star_count": int,
-  "review_four_star_count": int,
-  "review_five_star_count": int,
-  "review_count": int,
-  "question_count": int,
-  "price": int,
-  "total_price": int,
-  "stock": int,
-  "is_prime":boolean,
-  "description": ""
+  "id": Number,
+  "unique_id": Number,
+  "name": String,
+  "category": String,
+  "manufacturer": String,
+  "primary_image": String,
+  "review_one_star_count": Number,
+  "review_two_star_count": Number,
+  "review_three_star_count": Number,
+  "review_four_star_count": Number,
+  "review_five_star_count": Number,
+  "review_count": Number,
+  "question_count": Number,
+  "price": Number,
+  "total_price": Number,
+  "stock": Number,
+  "is_prime": Boolean,
+  "description": String
 }
 ```
 
@@ -34,8 +34,8 @@ Create Single Product Data:
 
 ```javascript
 {
-  "id": int,
-  "isSuccess": boolean
+  "id": Number,
+  "isSuccess": Boolean
 }
 ```
 
@@ -44,8 +44,8 @@ Update Single Product Data:
 
 ```javascript
 {
-  "id": int,
-  "isSuccess": boolean
+  "id": Number,
+  "isSuccess": Boolean
 }
 ```
 
@@ -54,7 +54,7 @@ Delete Single Product Data:
 
 ```javascript
 {
-  "id": int,
-  "isSuccess": boolean
+  "id": Number,
+  "isSuccess": Boolean
 }
 ```

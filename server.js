@@ -10,6 +10,8 @@ const productRoutes = require('./app/controllers/productRoutes');
 
 const seedScript = require('./app/helpers/seedingScript');
 
+const port = 3000;
+
 seedScript();
 
 app.use(compression());
@@ -30,5 +32,5 @@ app.get('*', (req, res) => {
   res.redirect('/products/1');
 });
 
-app.listen(3000);
-console.log('Listening on localhost:80');
+app.listen(port);
+console.log(`Listening on localhost:${port}`);
