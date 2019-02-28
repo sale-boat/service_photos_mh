@@ -40,7 +40,7 @@ Create Single Product Data:
 ```
 
 Update Single Product Data:
-<br>POST: '/api/products/:id'
+<br>PUT: '/api/products/:id'
 
 ```javascript
 {
