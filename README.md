@@ -45,12 +45,28 @@ Update Single Product Data:
 ```javascript
 {
   "id": Number,
-  "isSuccess": Boolean
+  "unique_id": Number,
+  "name": String,
+  "category": String,
+  "manufacturer": String,
+  "primary_image": String,
+  "review_one_star_count": Number,
+  "review_two_star_count": Number,
+  "review_three_star_count": Number,
+  "review_four_star_count": Number,
+  "review_five_star_count": Number,
+  "review_count": Number,
+  "question_count": Number,
+  "price": Number,
+  "total_price": Number,
+  "stock": Number,
+  "is_prime": Boolean,
+  "description": String
 }
 ```
 
 Delete Single Product Data:
-<br>GET: '/api/products/:id/delete'
+<br>DELETE: '/api/products/:id'
 
 ```javascript
 {
