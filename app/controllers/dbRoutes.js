@@ -1,6 +1,6 @@
 const express = require('express');
 
-const Products = require('../models/modelHelpers');
+const Products = require('../models/postgres/modelHelpers');
 
 const router = express.Router();
 

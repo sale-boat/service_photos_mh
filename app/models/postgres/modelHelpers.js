@@ -1,18 +1,10 @@
 const { Client } = require('pg');
-const { database } = require('../../config');
+const { database } = require('../../../config');
+const { databaseStringify } = require('../utils');
 
-/*
-All these methods are generic functions and can be used for any table
-*/
 
-const postgresStringify = function (value) {
-  // Postgres requires strings to look like, 'example', and not 
-  var result = JSON.stringify(value);
-  if (typeof value === 'string') {
-    result = '\'' + result.slice(1, result.length - 1) + '\'';
-  }
-  return result;
-}
+// All these methods are generic functions and can be used for any table
+
 
 const getAll = async (tableName='products') => {
   const client = new Client(database);
@@ -34,7 +26,7 @@ const insertOne = async (productData, tableName='products') => {
   const client = new Client(database);
   await client.connect();
   var keyString = Object.keys(productData).join(', ');
-  var dataString = Object.values(productData).map((value) => postgresStringify(value)).join(', ');
+  var dataString = Object.values(productData).map((value) => databaseStringify(value)).join(', ');
   var qStr = `INSERT INTO ${tableName} (${keyString}) VALUES (${dataString})`;
 
   const res = await client.query(qStr);
@@ -45,7 +37,7 @@ const insertOne = async (productData, tableName='products') => {
 const updateOne = async (id, productData, tableName='products') => {
   const client = new Client(database);
   await client.connect();
-  var dataString = Object.entries(productData).map((pair) => pair[0] + ' = ' + postgresStringify(pair[1])).join(' ');
+  var dataString = Object.entries(productData).map((pair) => pair[0] + ' = ' + databaseStringify(pair[1])).join(' ');
   const res = await client.query(`UPDATE ${tableName} SET ${dataString} WHERE ${tableName}.unique_id = ${id}`);
   client.end();
   return res;
