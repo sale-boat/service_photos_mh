@@ -33,7 +33,7 @@ function writeNTimes(fname, genData, n) {
       do {
         i++;
         if (i === n) {
-          writer.write(genData(i) + '\n', 'utf8');
+          writer.write(genData(i), 'utf8');
           resolve();
         } else {
           ok = writer.write(genData(i) + '\n', 'utf8');
