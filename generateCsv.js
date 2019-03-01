@@ -1,5 +1,6 @@
 
 const fs = require('fs');
+var zlib = require('zlib');
 const faker = require('faker');
 const keyOrdering = [
   "unique_id",
@@ -22,30 +23,27 @@ const keyOrdering = [
 ];
 
 function writeNTimes(fname, genData, n) {
-  let i = 1;
-  let writer = fs.createWriteStream(fname);
+  return new Promise((resolve) => {
+    let i = 0;
+    let writer = fs.createWriteStream(fname);
 
-  write();
-  function write() {
-    let ok = true;
-    do {
-      i++;
-      if (i === n + 1) {
-        writer.write(genData(i) + '\n', 'utf8');
-      } else {
-        ok = writer.write(genData(i) + '\n', 'utf8');
+    write();
+    function write() {
+      let ok = true;
+      do {
+        i++;
+        if (i === n) {
+          writer.write(genData(i) + '\n', 'utf8');
+          resolve();
+        } else {
+          ok = writer.write(genData(i) + '\n', 'utf8');
+        }
+      } while (i < n && ok);
+      if (i < n) {
+        writer.once('drain', write);
       }
-    } while (i < n + 1 && ok);
-    if (i < n + 1) {
-      writer.once('drain', write);
     }
-  }
-}
-
-function generateCsv(fname, genData, n) {
-  // let startTime = Math.floor(Date.now() / 1000);
-  writeNTimes(fname, genData, n);
-  // console.log(Math.floor(Date.now() / 1000) - startTime);
+  });
 }
 
 function generatePsqlObj(unique_id) {
@@ -85,4 +83,41 @@ function generateCsvRow(unique_id) {
   return values.join(',');
 }
 
-generateCsv("output.csv", generateCsvRow, 1000000);
+function compressFile(fname) {
+    var gzip = zlib.createGzip();
+    var r = fs.createReadStream(fname);
+    var w = fs.createWriteStream(`${fname}.gz`);
+    r.pipe(gzip).pipe(w);
+}
+
+function main() {
+  let cmdLineArgs = {
+    fname: "output.csv",
+    n: 1000000,
+    compress: false,
+    isPostgres: true
+  };  
+  let args = process.argv.slice(2);
+
+  for(let arg of args) {
+    if (arg.includes('--filename=')) {
+      cmdLineArgs.fname = arg.replace('--filename=', '');
+    } else if (arg.includes('-c')) {
+      cmdLineArgs.compress = true;
+    } else if (arg.includes('--n=')) {
+      cmdLineArgs.n = Number(arg.replace('--n=', ''));
+    } else if (arg === '--postgres=true') {
+      cmdLineArgs.isPostgres = true;
+    } else if (arg === '--cassandra=true') {
+      cmdLineArgs.isPostgres = false;
+    }
+  }
+  writeNTimes(cmdLineArgs.fname, generateCsvRow, cmdLineArgs.n)
+  .then(() => {
+    if (cmdLineArgs.compress) {
+      compressFile(cmdLineArgs.fname);
+    }
+  });
+}
+
+main();
