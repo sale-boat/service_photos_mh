@@ -9,6 +9,7 @@ module.exports = {
       "category" varchar,
       "manufacturer" varchar,
       "primary_image" varchar(100),
+      "secondary_images" text[],
       "review_one_star_count" int,
       "review_two_star_count" int,
       "review_three_star_count" int,
@@ -36,6 +37,7 @@ module.exports = {
       category, 
       manufacturer, 
       primary_image, 
+      secondary_images,
       review_one_star_count, 
       review_two_star_count, 
       review_three_star_count, 
@@ -49,6 +51,6 @@ module.exports = {
       is_prime,
       description
     )
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING *
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18) RETURNING *
   `,
 };

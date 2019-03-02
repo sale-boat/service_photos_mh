@@ -1,13 +1,17 @@
 
 const fs = require('fs');
 var zlib = require('zlib');
-const faker = require('faker');
+const postgresHelpers = require('./postgres');
+const cassandraHelpers = require('./cassandra');
+const utils = require('./utils');
+
 const keyOrdering = [
   "unique_id",
   "name",
   "category",
   "manufacturer",
   "primary_image",
+  "secondary_images",
   "review_one_star_count",
   "review_two_star_count",
   "review_three_star_count",
@@ -22,10 +26,11 @@ const keyOrdering = [
   "description"
 ];
 
-function writeNTimes(fname, genData, n) {
+function writeNTimes(fname, genData, n, isPostgres=true) {
   return new Promise((resolve) => {
     let i = 0;
     let writer = fs.createWriteStream(fname);
+    writer.write(keyOrdering.join(',') + '\n', 'utf8');
 
     write();
     function write() {
@@ -33,10 +38,10 @@ function writeNTimes(fname, genData, n) {
       do {
         i++;
         if (i === n) {
-          writer.write(genData(i), 'utf8');
+          writer.write(genData(i, isPostgres=isPostgres), 'utf8');
           resolve();
         } else {
-          ok = writer.write(genData(i) + '\n', 'utf8');
+          ok = writer.write(genData(i, isPostgres=isPostgres) + '\n', 'utf8');
         }
       } while (i < n && ok);
       if (i < n) {
@@ -46,48 +51,30 @@ function writeNTimes(fname, genData, n) {
   });
 }
 
-function generatePsqlObj(unique_id) {
-  let data = {
-    unique_id: unique_id,
-    name: faker.commerce.productName(),
-    category: 'category ' + unique_id.toString(),
-    manufacturer: 'manufacturer ' + unique_id.toString(),
-    primary_image: faker.image.image(),
-    review_one_star_count: faker.random.number(250),
-    review_two_star_count: faker.random.number(250),
-    review_three_star_count: faker.random.number(250),
-    review_four_star_count: faker.random.number(250),
-    review_five_star_count: faker.random.number(250),
-    question_count: faker.random.number(250),
-    price: faker.commerce.price(),
-    total_price: faker.commerce.price(),
-    stock: faker.random.number(250),
-    is_prime: faker.random.boolean(),
-    description: faker.lorem.paragraphs()
-  };
-  data.review_count = (data.review_one_star_count + 
-    data.review_two_star_count + 
-    data.review_three_star_count + 
-    data.review_four_star_count + 
-    data.review_five_star_count)
-  return data;
-}
-
-function generateCsvRow(unique_id) {
-  var obj = generatePsqlObj(unique_id);
+function generateCsvRow(unique_id, isPostgres=true) {
+  if (isPostgres) {
+    var obj = postgresHelpers.generatePsqlObj(unique_id);
+  } else {
+    var obj = cassandraHelpers.generateCassandraObj(unique_id);
+  }
   var values = [];
 
   for (let k of keyOrdering) {
-    values.push(JSON.stringify(obj[k]));
+    values.push(utils.stringify(obj[k]));
   }
   return values.join(',');
 }
 
 function compressFile(fname) {
+  return new Promise(function(resolve) {
     var gzip = zlib.createGzip();
     var r = fs.createReadStream(fname);
     var w = fs.createWriteStream(`${fname}.gz`);
     r.pipe(gzip).pipe(w);
+    r.on('end', () => {
+      resolve();
+    });
+  })
 }
 
 function main() {
@@ -112,10 +99,20 @@ function main() {
       cmdLineArgs.isPostgres = false;
     }
   }
-  writeNTimes(cmdLineArgs.fname, generateCsvRow, cmdLineArgs.n)
+  var startTime = Date.now();
+  console.log(`Beginning csv data generation... ${new Date(startTime).toLocaleTimeString()}`);
+  writeNTimes(cmdLineArgs.fname, generateCsvRow, cmdLineArgs.n, cmdLineArgs.isPostgres)
+  .then(() => {
+    console.log(`Completed csv data generation, duration: ${(Date.now() / 1000) - (startTime / 1000)} sec... ${new Date(Date.now()).toLocaleTimeString()}`);
+  })
   .then(() => {
     if (cmdLineArgs.compress) {
-      compressFile(cmdLineArgs.fname);
+      startTime = Date.now();
+      console.log(`Completed csv data compression... ${new Date(startTime).toLocaleTimeString()}`);
+      compressFile(cmdLineArgs.fname)
+      .then(() => {
+        console.log(`Completed csv data generation, duration: ${(Date.now() / 1000) - (startTime / 1000)} sec... ${new Date(Date.now()).toLocaleTimeString()}`);
+      });
     }
   });
 }

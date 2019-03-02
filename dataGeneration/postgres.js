@@ -1,0 +1,32 @@
+const faker = require('faker');
+const _ = require('underscore');
+
+function generatePsqlObj(unique_id) {
+  let data = {
+    unique_id: unique_id,
+    name: faker.commerce.productName(),
+    category: 'category ' + unique_id.toString(),
+    manufacturer: 'manufacturer ' + unique_id.toString(),
+    primary_image: faker.image.image(),
+    secondary_images: _.map(_.range(3), (val) => faker.image.image()),
+    review_one_star_count: faker.random.number(250),
+    review_two_star_count: faker.random.number(250),
+    review_three_star_count: faker.random.number(250),
+    review_four_star_count: faker.random.number(250),
+    review_five_star_count: faker.random.number(250),
+    question_count: faker.random.number(250),
+    price: faker.random.number(250),
+    total_price: faker.random.number(250),
+    stock: faker.random.number(250),
+    is_prime: faker.random.boolean(),
+    description: faker.lorem.paragraphs()
+  };
+  data.review_count = (data.review_one_star_count + 
+    data.review_two_star_count + 
+    data.review_three_star_count + 
+    data.review_four_star_count + 
+    data.review_five_star_count)
+  return data;
+}
+
+module.exports = { generatePsqlObj };
