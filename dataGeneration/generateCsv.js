@@ -8,6 +8,7 @@ const utils = require('./utils');
 const keyOrdering = [
   "unique_id",
   "name",
+  "slug",
   "category",
   "manufacturer",
   "primary_image",
@@ -23,14 +24,17 @@ const keyOrdering = [
   "total_price",
   "stock",
   "is_prime",
-  "description"
+  "description",
 ];
-
 function writeNTimes(fname, genData, n, isPostgres=true) {
   return new Promise((resolve) => {
     let i = 0;
     let writer = fs.createWriteStream(fname);
-    writer.write(keyOrdering.join(',') + '\n', 'utf8');
+    if (isPostgres) {
+      writer.write(keyOrdering.join(',') + '\n', 'utf8');
+    } else {
+      writer.write(['id'].concat(keyOrdering).join(',') + '\n', 'utf8');
+    }
 
     write();
     function write() {
@@ -59,8 +63,8 @@ function generateCsvRow(unique_id, isPostgres=true) {
   }
   var values = [];
 
-  for (let k of keyOrdering) {
-    values.push(utils.stringify(obj[k]));
+  for (let k of (isPostgres ? [] : ['id']).concat(keyOrdering)) {
+    values.push(utils.stringify(obj[k], isPostgres));
   }
   return values.join(',');
 }
@@ -80,16 +84,17 @@ function compressFile(fname) {
 function main() {
   let cmdLineArgs = {
     fname: "output.csv",
-    n: 1000000,
+    n: 10000000,
     compress: false,
     isPostgres: true
   };  
   let args = process.argv.slice(2);
 
   for(let arg of args) {
+    arg = arg.trim();
     if (arg.includes('--filename=')) {
       cmdLineArgs.fname = arg.replace('--filename=', '');
-    } else if (arg.includes('-c')) {
+    } else if (arg === '-c') {
       cmdLineArgs.compress = true;
     } else if (arg.includes('--n=')) {
       cmdLineArgs.n = Number(arg.replace('--n=', ''));
