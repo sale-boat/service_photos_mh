@@ -26,9 +26,10 @@ const keyOrdering = [
   "is_prime",
   "description",
 ];
-function writeNTimes(fname, genData, n, isPostgres=true) {
+function writeNTimes(fname, genData, n, isPostgres=true, start=0) {
   return new Promise((resolve) => {
-    let i = 0;
+    let i = start;
+    n = start + n;
     let writer = fs.createWriteStream(fname);
     if (isPostgres) {
       writer.write(keyOrdering.join(',') + '\n', 'utf8');
@@ -86,7 +87,8 @@ function main() {
     fname: "output.csv",
     n: 10000000,
     compress: false,
-    isPostgres: true
+    isPostgres: true,
+    start: 0
   };  
   let args = process.argv.slice(2);
 
@@ -98,6 +100,8 @@ function main() {
       cmdLineArgs.compress = true;
     } else if (arg.includes('--n=')) {
       cmdLineArgs.n = Number(arg.replace('--n=', ''));
+    } else if (arg.includes('--start=')) {
+      cmdLineArgs.start = Number(arg.replace('--start=', ''));
     } else if (arg === '--postgres=true') {
       cmdLineArgs.isPostgres = true;
     } else if (arg === '--cassandra=true') {
@@ -106,7 +110,7 @@ function main() {
   }
   var startTime = Date.now();
   console.log(`Beginning csv data generation... ${new Date(startTime).toLocaleTimeString()}`);
-  writeNTimes(cmdLineArgs.fname, generateCsvRow, cmdLineArgs.n, cmdLineArgs.isPostgres)
+  writeNTimes(cmdLineArgs.fname, generateCsvRow, cmdLineArgs.n, cmdLineArgs.isPostgres, cmdLineArgs.start)
   .then(() => {
     console.log(`Completed csv data generation, duration: ${(Date.now() / 1000) - (startTime / 1000)} sec... ${new Date(Date.now()).toLocaleTimeString()}`);
   })
