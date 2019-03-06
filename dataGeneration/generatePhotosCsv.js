@@ -46,4 +46,4 @@ function writeNTimes(fname, genData, n) {
   });
 }
 
-writeNTimes('photos.csv', generateRow, 10000000);
+writeNTimes('photos.csv', generateRow, 5000000);
