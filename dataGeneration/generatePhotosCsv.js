@@ -16,9 +16,10 @@ const generateRow = function(product_id) {
   return photos.join('\n');
 }
 
-function writeNTimes(fname, genData, n) {
+function writeNTimes(fname, genData, n, start=1) {
   return new Promise((resolve) => {
-    let i = 0;
+    let i = start;
+    n = n + start;
     let writer = fs.createWriteStream(fname);
     writer.write(keyOrdering.join(',') + '\n', 'utf8');
 
@@ -46,4 +47,5 @@ function writeNTimes(fname, genData, n) {
   });
 }
 
-writeNTimes('photos.csv', generateRow, 5000000);
+var start = (process.argv[2] ? process.argv[2] : 1);
+writeNTimes(`photos-${start}.csv`, generateRow, 5000000, start);
