@@ -48,4 +48,4 @@ function writeNTimes(fname, genData, n, start=1) {
 }
 
 var start = (process.argv[2] ? process.argv[2] : 1);
-writeNTimes(`photos-${start}.csv`, generateRow, 5000000, start);
+writeNTimes(`photos-${start}.csv`, generateRow, 10000000, start);
