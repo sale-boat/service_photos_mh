@@ -1,8 +1,29 @@
 config:
   target: 'http://127.0.0.1:3000'
   phases:
+    - duration: 20
+      arrivalRate: 5
+      rampTo: 15
+      name: "5 => 15"
+    - duration: 20
+      arrivalRate: 15
+      rampTo: 30
+      name: "15 => 30"
+    - duration: 20
+      arrivalRate: 30
+      rampTo: 50
+      name: "30 => 50"
+    - duration: 20
+      arrivalRate: 50
+      rampTo: 75
+      name: "50 => 75"
+    - duration: 20
+      arrivalRate: 75
+      rampTo: 100
+      name: "75 => 100"
     - duration: 60
-      arrivalRate: 1000
+      arrivalRate: 100
+      name: "100 [MAXIMUM]"
 scenarios:
   - flow:
     - get:

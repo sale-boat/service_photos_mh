@@ -19,7 +19,7 @@ app.get('/api/bundle', (req, res) => {
   res.sendFile(`${__dirname}/dist/bundle.js`);
 });
 
-app.use('/api', cors(), dbRoutes); // App must handle any table name for /api routes
+app.use('/api/products', cors(), dbRoutes); // App must handle any table name for /api routes
 
 app.get('/products/:id', (req, res) => {
   res.sendFile(`${__dirname}/dist/index.html`);
