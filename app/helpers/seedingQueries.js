@@ -1,7 +1,5 @@
 module.exports = {
   createTableQueries: `
-    DROP TABLE IF EXISTS products, product_variations;
-
     CREATE TABLE "products" (
       "id" SERIAL PRIMARY KEY,
       "unique_id" int,

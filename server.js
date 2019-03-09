@@ -1,5 +1,6 @@
+require('newrelic');
+
 const express = require('express');
-const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const compression = require('compression');
@@ -7,12 +8,7 @@ const compression = require('compression');
 const app = express();
 
 const dbRoutes = require('./app/controllers/dbRoutes');
-
-const seedScript = require('./app/helpers/seedingScript');
-
 const port = 3000;
-
-seedScript();
 
 app.use(compression());
 app.use(bodyParser.json());

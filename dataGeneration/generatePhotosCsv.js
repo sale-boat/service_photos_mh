@@ -6,7 +6,7 @@ const faker = require('faker');
 const keyOrdering = ['product_id', 'url'];
 
 const generateRow = function(product_id) {
-  var mini = (product_id > 5 ? 10 : 0); // TODO FIX
+  var mini = (product_id > 5 ? 10 : 0);
   var photoCount = utils.randInt(mini, 15);
   var photos = [];
 
