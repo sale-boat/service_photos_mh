@@ -19,5 +19,5 @@ CREATE TABLE products (
   total_price int,
   stock int,
   is_prime boolean,
-  description varchar(250)
+  description varchar(500)
 );
