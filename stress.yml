@@ -2,29 +2,45 @@ config:
   target: 'http://127.0.0.1:3000'
   phases:
     - duration: 20
-      arrivalRate: 5
-      rampTo: 15
-      name: "5 => 15"
+      arrivalRate: 20
+      rampTo: 25
+      name: "20 => 25"
+
     - duration: 20
-      arrivalRate: 15
+      arrivalRate: 25
       rampTo: 30
-      name: "15 => 30"
-    - duration: 20
+      name: "25 => 30"
+
+    - duration: 100
       arrivalRate: 30
-      rampTo: 50
-      name: "30 => 50"
-    - duration: 20
-      arrivalRate: 50
-      rampTo: 75
-      name: "50 => 75"
-    - duration: 20
-      arrivalRate: 75
       rampTo: 100
-      name: "75 => 100"
-    - duration: 60
-      arrivalRate: 100
-      name: "100 [MAXIMUM]"
+      name: "30 => 100 [MAXIMUM]"
 scenarios:
   - flow:
     - get:
         url: "/api/products/{{$randomNumber(1,10000000)}}"
+    - put:
+        url: "/api/products/{{$randomNumber(1,10000000)}}"
+        json:
+          review_count: "{{$randomNumber(1,100)}}"
+    - post:
+        url: "/api/products"
+        json:
+          unique_id: "{{$randomNumber(1,10000000)}}"
+          name: "Sample Name"
+          slug: "Temp Slug"
+          category: "category"
+          manufacturer: "manufacturer"
+          primary_image: "primaryimage"
+          review_one_star_count: 1
+          review_two_star_count: 1
+          review_three_star_count: 1 
+          review_four_star_count: 1
+          review_five_star_count: 1
+          review_count: 1
+          question_count: 1
+          price: 1
+          total_price: 1
+          stock: 1
+          is_prime: false
+          description: "description"
