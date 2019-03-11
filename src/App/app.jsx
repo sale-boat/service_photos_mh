@@ -43,12 +43,11 @@ export default class App extends React.Component {
         product,
       });
     } else {
-      let origin = 'http://localhost:3000';
       //let origin = 'http://3.88.66.74';
       // if (window.location.host.startsWith('localhost')) {
       //   origin = 'http://localhost';
       // }
-      Axios.get(`${origin}/api/products/${id}`)
+      Axios.get(`/api/products/${id}`)
         .then(({ data }) => {
           localStorage.setItem(id, JSON.stringify(data));
           this.setState({
