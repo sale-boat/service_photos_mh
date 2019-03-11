@@ -8,7 +8,8 @@
     "start": "node server.js",
     "devStart": "nodemon server.js",
     "devServer": "webpack-dev-server --open",
-    "seed": "node app/helpers/seedingScript.js"
+    "seed": "node app/helpers/seedingScript.js",
+    "build": "npx webpack --config webpack.config.js"
   },
   "jest": {
     "snapshotSerializers": [
