@@ -20,3 +20,6 @@ COPY products(
   is_prime,
   description
 ) FROM '/home/ubuntu/service_photos_mh/dataGeneration/output.csv' DELIMITER ',' CSV HEADER;
+
+CREATE INDEX ON products (unique_id);
+CREATE INDEX ON products (slug);
