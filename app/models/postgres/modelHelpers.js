@@ -68,7 +68,7 @@ const insertOne = async (productData, tableName='products') => {
     var keyString = Object.keys(productData).join(', ');
     var dataString = Object.values(productData).map((value) => databaseStringify(value)).join(', ');
     var qStr = `INSERT INTO ${tableName} (${keyString}) VALUES (${dataString})`;
-  
+    console.log(qStr);
     res = await client.query(qStr);  
   } finally {
     client.release();
