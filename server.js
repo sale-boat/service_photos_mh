@@ -21,12 +21,8 @@ app.get('/api/bundle', (req, res) => {
 
 app.use('/api/products', cors(), dbRoutes); // App must handle any table name for /api routes
 
-app.get('/products/:id', (req, res) => {
+app.get('/:id', (req, res) => {
   res.sendFile(`${__dirname}/dist/index.html`);
-});
-
-app.get('*', (req, res) => {
-  res.redirect('/products/1');
 });
 
 app.listen(port);

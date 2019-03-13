@@ -36,7 +36,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    const id = document.URL.split('/')[document.URL.split('/').length - 1];
+    const id = window.location.pathname.split('/')[1];
     const product = JSON.parse(localStorage.getItem(id));
     if (product !== null) {
       this.setState({
