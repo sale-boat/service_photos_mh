@@ -1,8 +1,9 @@
 const express = require('express');
-
 const Products = require('../models/postgres/modelHelpers');
-
 const router = express.Router();
+const cache = require('express-redis-cache')({
+  host: '127.0.0.1', port: '6379', auth_pass: 'redispassword'
+  });
 
 // TODO: actually give a appropriate isSuccess value
 
@@ -17,7 +18,7 @@ router.post('/', async (req, res) => {
   res.send({isSuccess: true, unique_id: req.body.unique_id});
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', cache.route(), async (req, res) => {
   const { id } = req.params;
   const product = await Products.getOne(id);
   res.send(product.rows[0]);
