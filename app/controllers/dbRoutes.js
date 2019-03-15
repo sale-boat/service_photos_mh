@@ -2,7 +2,7 @@ const express = require('express');
 const Products = require('../models/postgres/modelHelpers');
 const router = express.Router();
 const cache = require('express-redis-cache')({
-  host: '127.0.0.1', port: '6379', auth_pass: 'redispassword'
+  host: '127.0.0.1', port: 6379, auth_pass: 'redispassword'
   });
 
 // TODO: actually give a appropriate isSuccess value
