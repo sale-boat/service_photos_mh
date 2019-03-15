@@ -6,10 +6,10 @@ const router = express.Router();
 
 // TODO: actually give a appropriate isSuccess value
 
-router.get('/', async (req, res) => {
-  const products = await Products.getAll();
-  res.send(products);
-});
+//router.get('/', async (req, res) => {
+//  const products = await Products.getAll();
+//  res.send(products);
+//});
 
 router.post('/', async (req, res) => {
   // Create an object
